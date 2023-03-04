@@ -4,31 +4,21 @@ import com.example.dto.UserDto;
 import com.example.entity.User;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Component
 public class UserMapper implements Mapper<User, UserDto> {
-    private static final UserMapper INSTANCE = new UserMapper();
 
     @Override
     public UserDto mapFrom(User object) {
         return UserDto.builder()
                 .id(object.getId())
-                .login(object.getLogin())
+                .login(object.getUsername())
                 .nickName(object.getNickName())
                 .build();
-    }
-
-    public User mapFormDto(UserDto object){
-        return User.builder()
-                .id(object.getId())
-                .login(object.getLogin())
-                .nickName(object.getNickName())
-                .password(object.getPassword())
-                .build();
-    }
-
-    public static UserMapper getInstance() {
-        return INSTANCE;
     }
 
 }

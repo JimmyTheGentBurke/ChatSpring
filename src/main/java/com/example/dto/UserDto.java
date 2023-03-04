@@ -2,8 +2,9 @@ package com.example.dto;
 
 import lombok.*;
 
-@Value
+@Data
 @Builder
+@AllArgsConstructor
 public class UserDto {
     Long id;
     String login;

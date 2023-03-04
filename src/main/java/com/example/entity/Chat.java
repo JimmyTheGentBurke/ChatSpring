@@ -19,16 +19,18 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    private User userCreator;
-    @OneToMany
-    private List<User> recipient;
-    @Column(nullable = false,unique = true)
+    @JoinColumn(name = "user_creator", nullable = false, unique = true)
+    private User creator;
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "chatId")
+    @OneToMany(mappedBy = "chat")
     private List<Message> messages = new ArrayList<>();
     @Builder.Default
-    @ManyToMany(mappedBy = "chats")
+    @ManyToMany
+    @JoinTable(name = "chat_users",
+            joinColumns = @JoinColumn(name = "chat_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users = new ArrayList<>();
 
     public void addChat(User user) {

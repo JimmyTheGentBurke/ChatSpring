@@ -4,9 +4,8 @@ import com.example.entity.Chat;
 import com.example.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
-
-@Value
+import lombok.Data;
+@Data
 @Builder
 @AllArgsConstructor
 public class MessageDto {

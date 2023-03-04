@@ -2,12 +2,19 @@ package com.example.repository;
 
 import com.example.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    List<User> findByChatsId(Long id);
+    @Query("SELECT u FROM User u JOIN ChatUsers cu ON u.id = cu.user WHERE cu.chat = :id")
+    List<User> findUsersByChatId(Long id);
+
     Optional<User> findByNickName(String nickName);
+
+    Optional<User> findByUsername(String username);
 }

@@ -5,7 +5,7 @@ import lombok.*;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(of ="id")
+@EqualsAndHashCode(of = "id")
 @AllArgsConstructor
 
 @Builder
@@ -17,8 +17,8 @@ public class Message {
     private Long id;
     private String text;
     @ManyToOne
-    private Chat chatId;
+    private Chat chat;
     @ManyToOne
-    private User creatorId;
+    private User creator;
 
 }

@@ -3,9 +3,9 @@ package com.example.dto;
 import com.example.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 @Builder
 @AllArgsConstructor
 public class ChatDto {
