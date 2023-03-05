@@ -48,17 +48,14 @@ public class Chat {
 
 
 
-        return "/chat";
+        return "chat";
     }
 
     @PostMapping()
     @SneakyThrows
     public String createChat(@AuthenticationPrincipal UserDetails userDetails,
                              HttpServletRequest request,
-                             HttpServletResponse response,
-                             @RequestParam("chatIdForAddUser") Long chatIdForAddUser,
-                             @RequestParam("UserName") Long UserName,
-                             @RequestParam("userIdCreateSearch") Long userIdCreateSearch) {
+                             HttpServletResponse response) {
 
         Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
 
@@ -71,11 +68,15 @@ public class Chat {
                     .name(request.getParameter("chatName"))
                     .build(), recipient.orElseThrow().getId());
 
-            response.sendRedirect("/message?chatId=" + chat.orElseThrow().getId());
+            response.sendRedirect("/chat?chatId=" + chat.orElseThrow().getId());
 
-        } else if (request.getParameter("UserName") != null) {
+        }
+        else if (request.getParameter("UserName") != null) {
 
-            Optional<ChatUsers> chatUsers = chatService.addUser(chatIdForAddUser, UserName);
+            Optional<UserDto> userName = userService.findByNickName(request.getParameter("UserName"));
+
+            Optional<ChatUsers> chatUsers = chatService.addUser(Long.valueOf(request.getParameter("chatIdForAddUser")),
+                    userName.orElseThrow().getId());
 
             response.sendRedirect("/message?chatId=" + chatUsers.orElseThrow().getChat());
 
@@ -86,12 +87,13 @@ public class Chat {
                     .name(request.getParameter("createChatFromSearch"))
                     .build();
 
-            Optional<com.example.entity.Chat> chat = chatService.save(createChatFromSearch, userIdCreateSearch);
+            Optional<com.example.entity.Chat> chat = chatService.save(createChatFromSearch, Long.valueOf(request.getParameter("userIdCreateSearch")));
             response.sendRedirect("/message?chatId=" + chat.orElseThrow().getId());
 
         }
 
         return "chat";
     }
+
 
 }

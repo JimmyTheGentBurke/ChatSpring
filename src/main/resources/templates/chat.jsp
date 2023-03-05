@@ -133,7 +133,9 @@
                                         </form>
                                     </div>
                                 </div>
+
 <%--                                Drop window--%>
+
                                 <div id="drop-window">
                                     <div id="window">
                                         <form action="${pageContext.request.contextPath}/chat" class="pop-up-window"
@@ -158,7 +160,9 @@
                                         <a href="#" class="btn btn-primary">Close</a>
                                     </div>
                                 </div>
+
                             <%--                            Drop Window Creation Of Chat P2P--%>
+
                             <c:if test="${requestScope.get('messages') != null}">
                                 <c:forEach var="message" items="${requestScope.messages}">
                                     <c:if test="${message.creatorId.id == sessionScope.get('user').id}">

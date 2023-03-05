@@ -34,30 +34,25 @@ public class Message {
     @GetMapping
     @SneakyThrows
     public String messageInfo(Model model,
-                              @RequestParam("chatId") Long chatId,
-                              HttpServletRequest request,
-                              HttpServletResponse response) {
+                              @RequestParam("chatId") Long chatId) {
 
         List<com.example.entity.Message> messages = messageService.findByChatId(chatId);
         List<UserDto> recipients = userService.findUsersByChatId(chatId);
 
         model.addAttribute("messages", messages);
         model.addAttribute("recipients", recipients);
+        model.addAttribute("ChatId", chatId);
 
-        request.getRequestDispatcher("/chat")
-                .forward(request, response);
-
-        return "chat";
+        return "forward:/chat";
     }
 
     @PostMapping
+    @SneakyThrows
     public String createMessage(@AuthenticationPrincipal UserDetails userDetails,
                                 HttpServletRequest request,
-                                HttpServletResponse response,
                                 @RequestParam("chatId") Long chatId) {
 
         Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
-
 
         Optional<ChatDto> chatDto = chatService.findById(chatId);
         Chat chat = Chat.builder()
@@ -72,7 +67,7 @@ public class Message {
                 .creatorId(authorisedUser.orElseThrow().getId())
                 .build());
 
-        return "forward:/chat";
+        return "redirect:/message?chatId=" + chatId;
     }
 
 }
