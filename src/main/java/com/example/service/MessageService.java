@@ -19,14 +19,12 @@ public class MessageService {
 
     @Transactional(readOnly = true)
     public List<Message> findByChatId(Long id) {
-
         return messageRepository.findByChatId(id);
-
     }
+
     @Transactional
     public Optional<Message> create(CreateMessageDto messageDto) {
-
         return Optional.of(messageRepository.save(messageMapper.mapFrom(messageDto)));
-
     }
+
 }

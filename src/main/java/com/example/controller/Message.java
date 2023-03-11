@@ -8,7 +8,6 @@ import com.example.service.ChatService;
 import com.example.service.MessageService;
 import com.example.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,8 +32,8 @@ public class Message {
     private final UserService userService;
     @GetMapping
     @SneakyThrows
-    public String messageInfo(Model model,
-                              @RequestParam("chatId") Long chatId) {
+    public String getMessagesByChatId(Model model,
+                                      @RequestParam("chatId") Long chatId) {
 
         List<com.example.entity.Message> messages = messageService.findByChatId(chatId);
         List<UserDto> recipients = userService.findUsersByChatId(chatId);

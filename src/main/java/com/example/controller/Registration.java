@@ -16,15 +16,13 @@ public class Registration {
 
 
     @GetMapping("/registration")
-    public String registrationGet() {
-
+    public String getRegistrationPage() {
         return "index";
-
     }
 
 
     @PostMapping("/registration")
-    public String registrationPost(HttpServletRequest request) {
+    public String registration(HttpServletRequest request) {
 
         userService.create(new CreateUserDto(
                 request.getParameter("username"),
@@ -33,7 +31,6 @@ public class Registration {
                 request.getParameter("role")
         ));
         return "index";
-
     }
 
 }

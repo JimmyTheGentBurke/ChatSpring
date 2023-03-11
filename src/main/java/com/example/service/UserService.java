@@ -29,13 +29,11 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Optional<User> create(CreateUserDto userDto) {
-
         return Optional.of(userRepository.save(createUserMapper.mapFrom(userDto)));
     }
 
     @Transactional(readOnly = true)
     public Optional<UserDto> findByNickName(String nickName) {
-
         return userRepository.findByNickName(nickName)
                 .map(userMapper::mapFrom);
 
@@ -43,7 +41,6 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public Optional<UserDto> findByUsername(String username) {
-
         return userRepository.findByUsername(username)
                 .map(userMapper::mapFrom);
 
@@ -51,7 +48,6 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public List<UserDto> findAll() {
-
         return userRepository.findAll().stream()
                 .map(userMapper::mapFrom)
                 .collect(Collectors.toList());
@@ -59,7 +55,6 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public List<UserDto> findUsersByChatId(Long id) {
-
         return userRepository.findUsersByChatId(id)
                 .stream()
                 .map(userMapper::mapFrom)

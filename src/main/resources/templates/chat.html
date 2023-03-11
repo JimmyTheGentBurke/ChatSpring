@@ -30,7 +30,11 @@
                     <div class="px-4 d-none d-md-block">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
-                                <input type="text" class="form-control my-3" placeholder="Search...">
+                                <form th:action="@{'/chat' + '#chatFromSearch'}" method="get">
+                                <input name="nickNameFromSearch" type="text" class="form-control my-3" placeholder="Enter the nick name of user">
+                                    <button type="submit">
+                                        Search</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -84,19 +88,25 @@
                         <div class="chat-messages p-4 messages-place">
                             <!-- Drop Window Creation Of Chat P2P-->
                             <div id="chatFromSearch">
-                                <div id="windowFromSearch">
-                                    <form th:action="@{/chat(chat = ${param.chatId})}" class="pop-up-window"
-                                          method="post">
+                                <div id="windowFromSearch" th:each="nickNameFromSearch : ${searchByNickName}">
+                                        <div class="d-flex align-items-start" >
+                                            <img src="https://bootdey.com/img/Content/avatar/avatar5.png"
+                                                 class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40">
+                                            <div class="flex-grow-1 ml-3">
+                                                <span th:text="${nickNameFromSearch.orElseThrow().nickName}"></span>
+                                            </div>
+                                        </div>
+                                        <form th:action="@{/chat/v3(userIdCreateSearch = ${nickNameFromSearch.orElseThrow().id})}" method="post">
                                         <label for="chatName">
                                             Chat name: <input id="createChatFromSearch" type="text"
-                                                              name="createChatFromSearch">
+                                                              name="chatName">
                                         </label>
                                         <input type="hidden" name="userIdCreateSearch"
-                                               th:value="${param.chat}">
+                                               th:value="${param.userIdCreateSearch}">
                                         <br>
                                         <button type="submit" class="btn btn-primary">Create new chat</button>
                                         <a href="#" class="btn btn-primary">Close</a>
-                                    </form>
+                                        </form>
                                 </div>
                             </div>
 
@@ -104,7 +114,7 @@
 
                             <div id="AddNewUser">
                                 <div id="Adduser">
-                                    <form th:action="@{/chat}" class="pop-up-window"
+                                    <form th:action="@{/chat/v2}" class="pop-up-window"
                                           method="post">
                                         <label for="chatName">
                                             User name: <input id="UserName" type="text" name="UserName">
@@ -120,7 +130,7 @@
 
                             <div id="drop-window">
                                 <div id="window">
-                                    <form th:action="@{/chat}" class="pop-up-window"
+                                    <form th:action="@{/chat/v1}" class="pop-up-window"
                                           method="post">
                                         <label for="chatName">
                                             Chat name: <input id="chatName" type="text" name="chatName">

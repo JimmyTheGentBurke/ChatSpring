@@ -16,6 +16,4 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addViewController("/message").setViewName("chat");
     }
 
-
-
 }
