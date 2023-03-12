@@ -14,10 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +51,7 @@ public class Message {
         Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
 
         Optional<ChatDto> chatDto = chatService.findById(chatId);
+
         Chat chat = Chat.builder()
                 .id(chatDto.orElseThrow().getId())
                 .creator(chatDto.orElseThrow().getCreator())

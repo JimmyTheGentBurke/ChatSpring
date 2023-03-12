@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN ChatUsers cu ON u.id = cu.user WHERE cu.chat = :id")
     List<User> findUsersByChatId(Long id);
 
-    Optional<User> findByNickName(String nickName);
+    Optional<User> findByNickNameIgnoreCase(String nickName);
 
     Optional<User> findByUsername(String username);
 }

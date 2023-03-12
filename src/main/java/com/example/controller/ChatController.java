@@ -50,7 +50,6 @@ public class ChatController {
         return "chat";
     }
 
-
     @PostMapping("/v1")
     public String createChat(@AuthenticationPrincipal UserDetails userDetails,
                               @RequestParam("chatName") String chatName,
@@ -96,50 +95,5 @@ public class ChatController {
 
         return "redirect:/message?chatId=" + chat.orElseThrow().getId();
     }
-
-
-//    @PostMapping()
-//    @SneakyThrows
-//    public String createChat(@AuthenticationPrincipal UserDetails userDetails,
-//                             HttpServletRequest request,
-//                             HttpServletResponse response) {
-//
-//        Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
-//
-//        if (request.getParameter("recipientName") != null) {
-//
-//            Optional<UserDto> recipient = userService.findByNickName(request.getParameter("recipientName"));
-//
-//            Optional<com.example.entity.Chat> chat = chatService.save(CreateChatDto.builder()
-//                    .creator(new User().setId(authorisedUser.orElseThrow().getId()))
-//                    .name(request.getParameter("chatName"))
-//                    .build(), recipient.orElseThrow().getId());
-//
-//            response.sendRedirect("/chat?chatId=" + chat.orElseThrow().getId());
-//
-//        } else if (request.getParameter("UserName") != null) {
-//
-//            Optional<UserDto> userName = userService.findByNickName(request.getParameter("UserName"));
-//
-//            Optional<ChatUsers> chatUsers = chatService.addUser(Long.valueOf(request.getParameter("chatIdForAddUser")),
-//                    userName.orElseThrow().getId());
-//
-//            response.sendRedirect("/message?chatId=" + chatUsers.orElseThrow().getChat());
-//
-//        } else {
-//
-//            CreateChatDto createChatFromSearch = CreateChatDto.builder()
-//                    .creator(new User().setId(authorisedUser.orElseThrow().getId()))
-//                    .name(request.getParameter("createChatFromSearch"))
-//                    .build();
-//
-//            Optional<com.example.entity.Chat> chat = chatService.save(createChatFromSearch, Long.valueOf(request.getParameter("userIdCreateSearch")));
-//            response.sendRedirect("/message?chatId=" + chat.orElseThrow().getId());
-//
-//        }
-//
-//        return "chat";
-//    }
-
 
 }

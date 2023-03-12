@@ -34,7 +34,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public Optional<UserDto> findByNickName(String nickName) {
-        return userRepository.findByNickName(nickName)
+        return userRepository.findByNickNameIgnoreCase(nickName)
                 .map(userMapper::mapFrom);
 
     }
