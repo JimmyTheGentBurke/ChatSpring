@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import com.example.dto.ChatDto;
 import com.example.dto.CreateChatDto;
 import com.example.dto.UserDto;
 import com.example.entity.ChatUsers;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -36,11 +34,10 @@ public class ChatController {
 
         Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
 
-        List<ChatDto> chats = chatService.findByUserId(authorisedUser.orElseThrow().getId());
-
-        model.addAttribute("chats", chats);
+        model.addAttribute("chats", chatService.findByUserId(authorisedUser.orElseThrow().getId()));
         model.addAttribute("user", authorisedUser);
         model.addAttribute("users", userService.findAll());
+
         if (request.getParameter("nickNameFromSearch") != null) {
             model.addAttribute("searchByNickName",
                     userService.findByNickName(request.getParameter("nickNameFromSearch")));
@@ -52,8 +49,8 @@ public class ChatController {
 
     @PostMapping("/v1")
     public String createChat(@AuthenticationPrincipal UserDetails userDetails,
-                              @RequestParam("chatName") String chatName,
-                              @RequestParam("recipientName") String recipientName) {
+                             @RequestParam("chatName") String chatName,
+                             @RequestParam("recipientName") String recipientName) {
 
         Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
 
@@ -82,7 +79,7 @@ public class ChatController {
     @PostMapping("/v3")
     public String createChatFromSearch(@AuthenticationPrincipal UserDetails userDetails,
                                        @RequestParam("chatName") String chatName,
-                                       @RequestParam("userIdCreateSearch") Long userIdCreateSearch){
+                                       @RequestParam("userIdCreateSearch") Long userIdCreateSearch) {
 
         Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
 

@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.dto.ChatDto;
 import com.example.dto.CreateMessageDto;
-import com.example.dto.UserDto;
 import com.example.entity.Chat;
 import com.example.service.ChatService;
 import com.example.service.MessageService;
@@ -14,29 +13,29 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/message")
 @AllArgsConstructor
-public class Message {
+public class MessageController {
 
     private final ChatService chatService;
     private final MessageService messageService;
     private final UserService userService;
+
     @GetMapping
     @SneakyThrows
     public String getMessagesByChatId(Model model,
                                       @RequestParam("chatId") Long chatId) {
 
-        List<com.example.entity.Message> messages = messageService.findByChatId(chatId);
-        List<UserDto> recipients = userService.findUsersByChatId(chatId);
-
-        model.addAttribute("messages", messages);
-        model.addAttribute("recipients", recipients);
+        model.addAttribute("messages", messageService.findByChatId(chatId));
+        model.addAttribute("recipients", userService.findUsersByChatId(chatId));
         model.addAttribute("ChatId", chatId);
 
         return "forward:/chat";
@@ -47,8 +46,6 @@ public class Message {
     public String createMessage(@AuthenticationPrincipal UserDetails userDetails,
                                 HttpServletRequest request,
                                 @RequestParam("chatId") Long chatId) {
-
-        Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
 
         Optional<ChatDto> chatDto = chatService.findById(chatId);
 
@@ -61,7 +58,7 @@ public class Message {
         messageService.create(CreateMessageDto.builder()
                 .text(request.getParameter("textMessage"))
                 .chatId(chat)
-                .creatorId(authorisedUser.orElseThrow().getId())
+                .creatorId(userService.findByUsername(userDetails.getUsername()).orElseThrow().getId())
                 .build());
 
         return "redirect:/message?chatId=" + chatId;
