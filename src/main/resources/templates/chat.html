@@ -192,6 +192,9 @@
                                 </label>
                                 <button class="btn btn-primary">Send</button>
                             </form>
+                            <div th:if="${errors}">
+                                <p th:each="error :${errors}" th:text="${error.defaultMessage}">Error message</p>
+                            </div>
                         </div>
                     </div>
                 </div>

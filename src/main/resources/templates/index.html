@@ -37,6 +37,9 @@
         <input name="role" hidden="hidden" value="USER">
         <input type="submit" class="button" value="Signup">
       </form>
+      <div th:if="${errors}">
+        <p th:each="error :${errors}" th:text="${error.defaultMessage}"> Error message</p>
+      </div>
       <div class="signup">
         <span class="signup">Already have an account?
          <label for="check">Login</label>
