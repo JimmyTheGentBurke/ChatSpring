@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -12,101 +11,123 @@
 </head>
 <body>
 <main class="content">
-    <div class="hamburger-menu">
-        <input id="menu__toggle" type="checkbox"/>
-        <label class="menu__btn" for="menu__toggle">
-            <span></span>
-        </label>
-        <ul class="menu__box">
-            <li><a class="menu__item" href="#drop-window">Create new chat</a></li>
-            <li><a class="menu__item" href="#AddNewUser">Add User To Chat</a></li>
-        </ul>
-    </div>
-
-    <div class="container p-0">
+    <div class="container p-0" id="mainPag">
         <div class="card">
             <div class="row g-0">
                 <div class="col-12 col-lg-5 col-xl-3 border-right">
-                    <div class="px-4 d-none d-md-block">
+                    <div class="px-4 px-4 border-bottom d-none d-md-block">
                         <div class="d-flex align-items-center">
                             <div class="flex-grow-1">
-                                <form th:action="@{'/chat' + '#chatFromSearch'}" method="get">
-                                <input name="nickNameFromSearch" type="text" class="form-control my-3" placeholder="Enter the nick name of user">
-                                    <button type="submit">
-                                        Search</button>
+                                <form th:action="@{'/chat/v4' + '#chatFromSearch'}" method="post">
+                                    <label class="input-label2">
+                                        <input name="nickname" type="text" required="required"
+                                               class="form-control my-3" placeholder="Nickname">
+                                    </label>
+                                    <button class="btn btn-primary" type="submit">Search</button>
                                 </form>
                             </div>
                         </div>
                     </div>
 
                     <!--                    CHATS-->
-
-                    <tr th:each="chat : ${chats}">
-                        <a th:href="@{/message(chatId = ${chat.id})}"
-                           class="list-group-item list-group-item-action border-0">
-                            <div class="badge bg-success float-right">5</div>
-                            <div class="d-flex align-items-start">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar5.png"
-                                     class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40">
-                                <div class="flex-grow-1 ml-3" th:text="${chat.name}">
-                                    <span th:text="${chat.creator.nickName}"></span>
-                                    <div class="small"><span class="fas fa-circle chat-online"></span> Online</div>
+                    <div class="chat-messages2">
+                        <div th:each="chat : ${chats}" class="">
+                            <a th:href="@{/message(chatId = ${chat.id}) }"
+                               class="list-group-item list-group-item-action border-0">
+                                <div class="d-flex align-items-start">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSByqDp5N_AYCT_DIFPTONelbRMNZC2jZerMsG4XRdAsCu9CAGmTlv1_AIpXkOa6iFaAiQ&usqp=CAU"
+                                         class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40">
+                                    <div class="flex-grow-1 ml-3" th:text="${chat.name}">
+                                        <span th:text="${chat.creator.getNickname()}"></span>
+                                        <div class="small"><span class="fas fa-circle chat-online"></span> Online</div>
+                                    </div>
+                                    <div>
+                                        <form th:action="@{/chat/v5(chatId = ${chat.id})}" method="post">
+                                            <button type="submit" class="btn-primary2"><img
+                                                    src="https://cdn-icons-png.flaticon.com/512/2782/2782988.png"
+                                                    width="20" height="20" alt="Button"></button>
+                                        </form>
+                                    </div>
                                 </div>
-                            </div>
-                        </a>
-                    </tr>
+                            </a>
+                        </div>
+                    </div>
 
                     <!--                    CHATS-->
+
+                <!--                        NAVIGATION-->
 
                     <hr class="d-block d-lg-none mt-1 mb-0">
                 </div>
                 <div class="col-12 col-lg-7 col-xl-9">
                     <div class="py-2 px-4 border-bottom d-none d-lg-block">
                         <div class="d-flex align-items-center py-1">
-                            <div class="position-relative">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                                     class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
-                            </div>
                             <div class="flex-grow-1 pl-3">
-                                <strong>Users in chat :</strong>
-                                <td th:each="resipient : ${recipients}">
-                                    <strong th:text="${resipient.nickName}"></strong>
-                                </td>
-                                <div class="text-muted small"><em>Typing...</em></div>
+                                <div th:if="${user.orElseThrow().id !=  resipient.id}"
+                                     th:each="resipient : ${recipients}" class="flex-grow-1 pl-3">
+                                    <var th:text="${resipient.nickname}"></var>
+                                    <form th:action="@{/chat/v6 (recipientId = ${resipient.id}, chatId = ${param.chatId})}"
+                                          method="post" class="flex-grow-2 pl-3">
+                                        <button type="submit" class="btn-primary2"><img
+                                                src="https://cdn-icons-png.flaticon.com/512/594/594598.png" height="10"
+                                                width="10"></button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div>
+                                <a th:href="@{/user}">
+                                    <button class="btn btn-primary" type="submit">My account</button>
+                                </a>
                             </div>
                             <div>
                                 <form action="/logout" method="post">
                                     <button type="submit" class="btn btn-primary">Logout</button>
                                 </form>
                             </div>
+                            <div th:if="${messages} != null">
+                                <a href="#AddNewUser">
+                                    <button class="btn btn-primary" type="submit">Add User</button>
+                                </a>
+                            </div>
+                            <div>
+                                <a href="#drop-window">
+                                    <button class="btn btn-primary" type="submit">Create new Chat</button>
+                                </a>
+                            </div>
                         </div>
                     </div>
+
+                    <!--                        NAVIGATION-->
 
                     <!--                    MESSAGES-->
 
                     <div class="position-relative message-content">
                         <div class="chat-messages p-4 messages-place">
+                            <div th:if="${errorsParam}">
+                                <p style="color: red" th:each="error :${errorsParam}" th:text="${error}"> Error
+                                    message</p>
+                            </div>
+
                             <!-- Drop Window Creation Of Chat P2P-->
-                            <div id="chatFromSearch">
-                                <div id="windowFromSearch" th:each="nickNameFromSearch : ${searchByNickName}">
-                                        <div class="d-flex align-items-start" >
-                                            <img src="https://bootdey.com/img/Content/avatar/avatar5.png"
-                                                 class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40">
-                                            <div class="flex-grow-1 ml-3">
-                                                <span th:text="${nickNameFromSearch.orElseThrow().nickName}"></span>
-                                            </div>
-                                        </div>
-                                        <form th:action="@{/chat/v3(userIdCreateSearch = ${nickNameFromSearch.orElseThrow().id})}" method="post">
+
+                            <div id="drop-window">
+                                <div id="window">
+                                    <form th:action="@{/chat/v1}" class="pop-up-window"
+                                          method="post">
                                         <label for="chatName">
-                                            Chat name: <input id="createChatFromSearch" type="text"
+                                            Chat name: <input id="chatName" type="text" required="required"
                                                               name="chatName">
                                         </label>
-                                        <input type="hidden" name="userIdCreateSearch"
-                                               th:value="${param.userIdCreateSearch}">
                                         <br>
-                                        <button type="submit" class="btn btn-primary">Create new chat</button>
-                                        <a href="#" class="btn btn-primary">Close</a>
-                                        </form>
+                                        <label for="recipientName">
+                                            Recipient: <input id="recipientName" type="text" required="required"
+                                                              name="recipientName">
+                                        </label>
+                                        <br>
+                                        <button type="submit" class="btn btn-primary">Create chat</button>
+                                    </form>
+                                    <br>
+                                    <a href="#" class="btn btn-primary">Close</a>
                                 </div>
                             </div>
 
@@ -117,39 +138,46 @@
                                     <form th:action="@{/chat/v2}" class="pop-up-window"
                                           method="post">
                                         <label for="chatName">
-                                            User name: <input id="UserName" type="text" name="UserName">
+                                            User name: <input id="username" required="required" type="text"
+                                                              name="username">
                                         </label>
-                                        <input type="hidden" name="chatIdForAddUser" th:value="${param.chatId}" >
+                                        <input type="hidden" name="chatId" required="required"
+                                               th:value="${param.chatId}">
                                         <button type="submit" class="btn btn-primary">Add User</button>
                                         <a href="#" class="btn btn-primary">Close</a>
                                     </form>
                                 </div>
                             </div>
 
-<!--                             Drop window            -->
+                            <!--                             Drop window            -->
 
-                            <div id="drop-window">
-                                <div id="window">
-                                    <form th:action="@{/chat/v1}" class="pop-up-window"
+                            <div id="chatFromSearch">
+                                <div id="windowFromSearch" th:if="${searchByNickName}">
+                                    <div class="d-flex align-items-start">
+                                        <img src="https://bootdey.com/img/Content/avatar/avatar5.png"
+                                             class="rounded-circle mr-1" alt="Vanessa Tucker" width="40" height="40">
+                                        <div class="flex-grow-1 ml-3">
+                                            <span th:text="${searchByNickName.orElseThrow().nickname}"></span>
+                                        </div>
+                                    </div>
+                                    <form th:action="@{/chat/v3(userIdCreateSearch = ${searchByNickName.orElseThrow().id})}"
                                           method="post">
                                         <label for="chatName">
-                                            Chat name: <input id="chatName" type="text" name="chatName">
+                                            Chat name: <input id="createChatFromSearch" type="text"
+                                                              name="chatName">
                                         </label>
-                                        <br>
-                                        <label for="recipientName">
-                                            Recipient: <input id="recipientName" type="text" name="recipientName">
-                                        </label>
+                                        <input type="hidden" name="userId"
+                                               th:value="${param.userIdCreateSearch}">
                                         <br>
                                         <button type="submit" class="btn btn-primary">Create new chat</button>
+                                        <a href="#" class="btn btn-primary">Close</a>
                                     </form>
-                                    <br>
-                                    <a href="#" class="btn btn-primary">Close</a>
                                 </div>
                             </div>
 
-<!--                            Drop Window Creation Of Chat P2P-->
+                            <!--                            Drop Window Creation Of Chat P2P-->
 
-<!--                            MESSAGES                        -->
+                            <!--                            MESSAGES                        -->
 
                             <div th:each="message : ${messages}">
                                 <div class="chat-message-right pb-4"
@@ -161,9 +189,13 @@
                                     </div>
                                     <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
                                         <div class="font-weight-bold mb-1"
-                                             th:text="${user.orElseThrow().nickName}"></div>
+                                             th:text="${user.orElseThrow().getNickname()}"></div>
                                         <span th:text="${message.text}"></span>
                                     </div>
+                                    <form th:action="@{/message/v1 (messageId = ${message.id} , chatId = ${message.chat.id})}"
+                                          method="post">
+                                        <button class="minus">-</button>
+                                    </form>
                                 </div>
                                 <div class="chat-message-left pb-4"
                                      th:if="${message.creator.id != user.orElseThrow().id}">
@@ -173,9 +205,13 @@
                                         <div class="text-muted small text-nowrap mt-2">2:34 am</div>
                                     </div>
                                     <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                        <div class="font-weight-bold mb-1" th:text="${message.creator.nickName}"></div>
+                                        <div class="font-weight-bold mb-1" th:text="${message.creator.nickname}"></div>
                                         <span th:text="${message.text}"></span>
                                     </div>
+                                    <form th:action="@{/message/v1 (messageId = ${message.id} , chatId = ${message.chat.id})}"
+                                          method="post">
+                                        <button type="submit" class="minus">-</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -183,11 +219,11 @@
 
                     <!--                    MESSAGES-->
 
-                    <div class="flex-grow-0 py-3 px-4 border-top">
+                    <div class="flex-grow-0 py-3 px-4 border-top" th:if="${param.chatId != null}">
                         <div class="input-group">
                             <form th:action="@{/message(chatId = ${param.chatId})}" method="post">
                                 <label class="input-label">
-                                    <input name="textMessage" type="text" class="form-control"
+                                    <input name="textMessage" type="text" required="required" class="form-control"
                                            placeholder="Type your message">
                                 </label>
                                 <button class="btn btn-primary">Send</button>
@@ -204,24 +240,50 @@
 </main>
 <style>
     body{
-        margin-top:20px;
+        margin-top: 5px;
         background: #009579;
     }
     main {
-        height: 961px;
+        height: 100%;
         background: #009579;
         overflow: hidden;
     }
 
+    .btn-primary{
+
+        margin-bottom: 7px;
+        margin-left: 3px;
+        border-color: seagreen;
+        background: #3e8e41;
+
+    }
+    .btn-primary2{
+
+        border: 0;
+        background: white;
+
+    }
+    .minus{
+        width: 20px;
+        height: 20px;
+    //background: #7BDED1;
+        border: 2px solid #7BDED1;
+        background: rgba(#fff, .9);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #7BDED1;
+        font-weight: bold;
+
+
+    }
     .chat-online {
-        color: #34ce57
+        color: #3e8e41
     }
     .messages-place {
         min-height: 750px;
         max-height: 750px;
-    }
-    .chat-offline {
-        color: #e4606d
     }
 
     .chat-messages {
@@ -231,8 +293,23 @@
         justify-content: flex-end;
         position: relative;
     }
+    .chat-messages2 {
+        display: flex;
+        flex-direction: column;
+        max-height: 800px;
+        position: relative;
+        overflow: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+
+    }
     .input-label {
         width: 720px;
+    }
+
+    .input-label2{
+        width: 130px;
     }
 
     .chat-message-left,
@@ -263,98 +340,18 @@
     .border-top {
         border-top: 1px solid #dee2e6!important;
     }
+    .flex-grow-1{
+        float: left;
 
-    #menu__toggle {
-        opacity: 0;
+        margin: auto;
+    }
+    .flex-grow-2{
+        float: left;
+        margin: auto;
     }
 
-    .mb-3 {
-        color: white;
-    }
-
-    .menu__btn {
-        display: flex;
-        align-items: center;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        width: 26px;
-        height: 26px;
-        cursor: pointer;
-        z-index: 1;
-    }
-
-    .menu__btn > span,
-    .menu__btn > span::before,
-    .menu__btn > span::after {
-        display: block;
-        position: absolute;
-        width: 100%;
-        height: 2px;
-        background-color: black;
-    }
-
-    .menu__btn > span::before {
-        content: '';
-        top: -8px;
-    }
-
-    .menu__btn > span::after {
-        content: '';
-        top: 8px;
-    }
-
-    .menu__box {
-        display: block;
-        position: fixed;
-        visibility: hidden;
-        top: 0;
-        left: -100%;
-        width: 300px;
-        height: 100%;
-        margin: 0;
-        padding: 80px 0;
-        list-style: none;
-        text-align: center;
-        background-color: #34ce57;
-        box-shadow: 1px 0px 6px rgba(0, 0, 0, .2);
-    }
-
-    .menu__item {
-        display: block;
-        padding: 12px 24px;
-        color: white;
-        font-family: 'Roboto', sans-serif;
-        font-size: 20px;
-        font-weight: 600;
-        text-decoration: none;
-    }
-
-    .menu__item:hover {
-        background-color: #CFD8DC;
-    }
-
-    #menu__toggle:checked ~ .menu__btn > span {
-        transform: rotate(45deg);
-    }
-
-    #menu__toggle:checked ~ .menu__btn > span::before {
-        top: 0;
-        transform: rotate(0);
-    }
-
-    #menu__toggle:checked ~ .menu__btn > span::after {
-        top: 0;
-        transform: rotate(90deg);
-    }
-
-    #menu__toggle:checked ~ .menu__box {
-        visibility: visible;
-        left: 0;
-    }
 
     #drop-window {
-        background: rgba(102, 102, 102, 0.5);
         width: 100%;
         height: 100%;
         position: absolute;
@@ -368,9 +365,9 @@
         height: 230px;
         text-align: center;
         padding: 15px;
-        border: 3px solid #34ce57;
+        border: 3px solid #3e8e41;
         border-radius: 10px;
-        color: #34ce57;
+        color: #3e8e41;
         position: absolute;
         top: 0;
         right: 0;
@@ -384,40 +381,11 @@
         display: block;
     }
 
-    .close {
-        display: inline-block;
-        border: 1px solid #34ce57;
-        color: #34ce57;
-        padding: 0 12px;
-        margin: 10px;
-        text-decoration: none;
-        background: #f2f2f2;
-        font-size: 14pt;
-        cursor: pointer;
-    }
-
-    .close:hover {
-        background: #e6e6ff;
-    }
-
     .pop-up-window {
         width: 400px;
         height: 230px;
     }
 
-    .dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    .dropdown-content {
-        display: none;
-        position: absolute;
-        background-color: #f1f1f1;
-        min-width: 213px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-    }
 
     .dropdown-content a {
         color: black;
@@ -430,16 +398,7 @@
         background-color: #ddd;
     }
 
-    .dropdown:hover .dropdown-content {
-        display: block;
-    }
-
-    .dropdown:hover .dropbtn {
-        background-color: #3e8e41;
-    }
-
     #chatFromSearch {
-        background: rgba(102, 102, 102, 0.5);
         width: 100%;
         height: 100%;
         position: absolute;
@@ -453,9 +412,9 @@
         height: 230px;
         text-align: center;
         padding: 15px;
-        border: 3px solid #34ce57;
+        border: 3px solid #3e8e41;
         border-radius: 10px;
-        color: #34ce57;
+        color: #3e8e41;
         position: absolute;
         top: 0;
         right: 0;
@@ -464,12 +423,26 @@
         margin: auto;
         background: #fff;
     }
+    .pop-up-window {
+        width: 400px;
+        height: 230px;
+    }
 
+
+    .dropdown-content a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #ddd;
+    }
     #chatFromSearch:target {
         display: block;
     }
     #AddNewUser {
-        background: rgba(102, 102, 102, 0.5);
         width: 100%;
         height: 100%;
         position: absolute;
@@ -483,9 +456,9 @@
         height: 230px;
         text-align: center;
         padding: 15px;
-        border: 3px solid #34ce57;
+        border: 3px solid #3e8e41;
         border-radius: 10px;
-        color: #34ce57;
+        color: #3e8e41;
         position: absolute;
         top: 0;
         right: 0;

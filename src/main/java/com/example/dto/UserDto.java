@@ -11,10 +11,10 @@ public class UserDto {
     Long id;
     @NotNull
     @Size(min = 6, max = 32)
-    String login;
+    String username;
     @NotNull
     @Size(min = 6, max = 32)
-    String nickName;
+    String nickname;
     @NotNull
     @Size(min = 6, max = 32)
     String password;

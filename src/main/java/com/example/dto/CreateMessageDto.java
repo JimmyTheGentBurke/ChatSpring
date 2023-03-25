@@ -13,11 +13,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class CreateMessageDto {
 
-    @NotNull
-    @Size(min = 1, max = 300)
     String text;
-    @NotNull
     Chat chatId;
-    @NotNull
     Long creatorId;
 }

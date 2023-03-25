@@ -8,6 +8,7 @@
 //import com.example.repository.ChatUsersRepository;
 //import com.example.repository.UserRepository;
 //import lombok.RequiredArgsConstructor;
+//import org.assertj.core.api.Assertions;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,7 @@
 //    private ChatUsersRepository chatUsersRepository;
 //
 //
+//
 //  /*  @BeforeEach
 //    void beforeEach() {
 //        userRepository.deleteAll();
@@ -37,6 +39,7 @@
 //    @Test
 //    void test() {
 //
+//        Assertions.assertThat()
 //        //given
 //        List<User> users = userRepository.saveAll(DataGenerator.generateUsers(50));
 //        List<Chat> chats = chatRepository.saveAll(DataGenerator.generateChats(50, users));

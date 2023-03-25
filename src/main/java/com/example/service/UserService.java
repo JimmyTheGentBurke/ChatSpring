@@ -2,18 +2,18 @@ package com.example.service;
 
 import com.example.dto.CreateUserDto;
 import com.example.dto.UserDto;
-import com.example.entity.User;
 import com.example.mapper.CreateUserMapper;
 import com.example.mapper.UserMapper;
 import com.example.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,31 +26,25 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final CreateUserMapper createUserMapper;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Transactional
-    public Optional<User> create(CreateUserDto userDto) {
-        return Optional.of(userRepository.save(createUserMapper.mapFrom(userDto)));
+    @SneakyThrows
+    public void create(CreateUserDto userDto) {
+        userRepository.save(createUserMapper.mapFrom(userDto));
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserDto> findByNickName(String nickName) {
-        return userRepository.findByNickNameIgnoreCase(nickName)
+    public Optional<UserDto> findByNickname(String nickName) {
+        return userRepository.findByNicknameIgnoreCase(nickName)
                 .map(userMapper::mapFrom);
-
     }
 
     @Transactional(readOnly = true)
     public Optional<UserDto> findByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(userMapper::mapFrom);
-
-    }
-
-    @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(userMapper::mapFrom)
-                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -61,7 +55,6 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
@@ -70,6 +63,21 @@ public class UserService implements UserDetailsService {
                         user.getPassword(),
                         Collections.singleton(user.getRole())
                 )).orElseThrow(() -> new UsernameNotFoundException("Failed to retrieve user : " + username));
+    }
+
+    public void updateUsername(String username, String updatedNickname){
+        userRepository.save(
+                userRepository.findByUsername(username).orElseThrow().setNickname(updatedNickname));
+    }
+
+    public void updatePassword(String username, String updatedPassword){
+        userRepository.save(
+                userRepository.findByUsername(username).orElseThrow().setPassword(
+                        passwordEncoder.encode(updatedPassword)));
+    }
+
+    public void deleteUser(Long id){
+        userRepository.delete(userRepository.findUserById(id));
     }
 
 }

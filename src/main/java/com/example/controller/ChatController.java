@@ -1,13 +1,11 @@
 package com.example.controller;
 
-import com.example.dto.ChatDto;
 import com.example.dto.CreateChatDto;
 import com.example.dto.UserDto;
-import com.example.entity.ChatUsers;
 import com.example.entity.User;
 import com.example.service.ChatService;
 import com.example.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,8 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -30,21 +28,16 @@ public class ChatController {
     private final ChatService chatService;
 
     @GetMapping()
-    public String getChatsByUserId(@AuthenticationPrincipal UserDetails userDetails,
-                                   HttpServletRequest request,
+    public String getChats(@AuthenticationPrincipal UserDetails userDetails,
                                    Model model) {
 
-        Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
+        model.addAttribute("chats", chatService.findByUserId(userService.findByUsername(
+                        userDetails
+                                .getUsername())
+                                .orElseThrow()
+                                .getId()));
 
-        model.addAttribute("chats", chatService.findByUserId(authorisedUser.orElseThrow().getId()));
-        model.addAttribute("user", authorisedUser);
-        model.addAttribute("users", userService.findAll());
-
-        if (request.getParameter("nickNameFromSearch") != null) {
-            model.addAttribute("searchByNickName",
-                    userService.findByNickName(request.getParameter("nickNameFromSearch")));
-
-        }
+        model.addAttribute("user", userService.findByUsername(userDetails.getUsername()));
 
         return "chat";
     }
@@ -52,47 +45,101 @@ public class ChatController {
     @PostMapping("/v1")
     public String createChat(@AuthenticationPrincipal UserDetails userDetails,
                              @RequestParam("chatName") String chatName,
-                             @RequestParam("recipientName") String recipientName) {
+                             @RequestParam("recipientName") String recipientName,
+                             RedirectAttributes redirectAttributes) {
 
-        Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
+        Optional<UserDto> recipient = userService.findByNickname(recipientName);
 
-        Optional<UserDto> recipient = userService.findByNickName(recipientName);
+        if (recipient.isEmpty()) {
 
-        Optional<com.example.entity.Chat> chat = chatService.save(CreateChatDto.builder()
-                .creator(new User().setId(authorisedUser.orElseThrow().getId()))
-                .name(chatName)
-                .build(), recipient.orElseThrow().getId());
+            redirectAttributes.addFlashAttribute("errorsParam", "There is no users with this nickname");
+            return "redirect:/chat";
+        }
 
-        return "redirect:/chat?chatId=" + chat.orElseThrow().getId();
+        return "redirect:/message?chatId=" + chatService.save(
+                CreateChatDto
+                        .builder()
+                        .creator(new User()
+                                        .setId(userService.findByUsername(userDetails.getUsername())
+                                        .orElseThrow()
+                                        .getId()))
+                        .name(chatName)
+                        .build(), recipient.orElseThrow().getId()).getId();
     }
 
     @PostMapping("/v2")
-    public String addUserToChat(@RequestParam("UserName") String UserName,
-                                @RequestParam("chatIdForAddUser") Long chatIdForAddUser) {
+    public String addUserToChat(@RequestParam("username") String username,
+                                @RequestParam("chatId") Long chatId,
+                                RedirectAttributes redirectAttributes) {
 
-        Optional<UserDto> userName = userService.findByNickName(UserName);
+        Optional<UserDto> user = userService.findByNickname(username);
 
-        Optional<ChatUsers> chatUsers = chatService.addUser(chatIdForAddUser,
-                userName.orElseThrow().getId());
+        if (user.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorsParam", "There is no users with this nickname");
 
-        return "redirect:/message?chatId=" + chatUsers.orElseThrow().getChat();
+            return "redirect:/message?chatId=" + chatId;
+        }
+
+        return "redirect:/message?chatId=" + chatService.addUser(chatId,
+                user.orElseThrow().getId()).getChat();
     }
 
     @PostMapping("/v3")
     public String createChatFromSearch(@AuthenticationPrincipal UserDetails userDetails,
                                        @RequestParam("chatName") String chatName,
-                                       @RequestParam("userIdCreateSearch") Long userIdCreateSearch) {
+                                       @RequestParam("userId") Long userId) {
 
-        Optional<UserDto> authorisedUser = userService.findByUsername(userDetails.getUsername());
-
-        CreateChatDto createChatFromSearch = CreateChatDto.builder()
-                .creator(new User().setId(authorisedUser.orElseThrow().getId()))
+        return "redirect:/message?chatId=" + chatService.save(
+                CreateChatDto
+                .builder()
+                .creator(new User().setId(userService
+                                   .findByUsername(userDetails
+                                   .getUsername())
+                                   .orElseThrow().getId()))
                 .name(chatName)
-                .build();
+                .build(), userId).getId();
+    }
 
-        Optional<com.example.entity.Chat> chat = chatService.save(createChatFromSearch, userIdCreateSearch);
+    @PostMapping("/v4")
+    public String getUserByNickname(@RequestParam @NotNull String nickname,
+                                    RedirectAttributes redirectAttributes,
+                                    Model model) {
 
-        return "redirect:/message?chatId=" + chat.orElseThrow().getId();
+        Optional<UserDto> UserByNickname = userService.findByNickname(nickname);
+
+        if (UserByNickname.isEmpty()) {
+
+            redirectAttributes.addFlashAttribute("errorsParam", "There is no users with this nickname");
+
+            return "redirect:/chat";
+        }
+
+        model.addAttribute("searchByNickName",UserByNickname);
+
+        return "chat";
+    }
+
+    @PostMapping("/v5")
+    public String deleteChat(@RequestParam("chatId") Long chatId) {
+
+        chatService.delete(chatId);
+        return "redirect:/chat";
+
+    }
+
+    @PostMapping("/v6")
+    public String deleteUser(@RequestParam("recipientId") Long recipientId,
+                             @RequestParam("chatId") Long chatId) {
+
+        chatService.deleteUser(recipientId, chatId);
+
+        if (chatService.countUsersInChat(chatId) == 1) {
+
+            chatService.delete(chatId);
+            return "redirect:/chat";
+        }
+
+        return "redirect:/message?chatId=" + chatId;
     }
 
 }

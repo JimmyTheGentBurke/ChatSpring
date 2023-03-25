@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +22,13 @@ public class MessageService {
     }
 
     @Transactional
-    public Optional<Message> create(CreateMessageDto messageDto) {
-        return Optional.of(messageRepository.save(messageMapper.mapFrom(messageDto)));
+    public void create(CreateMessageDto messageDto) {
+        messageRepository.save(messageMapper.mapFrom(messageDto));
+    }
+
+    @Transactional
+    public void delete(Long id){
+        messageRepository.deleteById(id);
     }
 
 }

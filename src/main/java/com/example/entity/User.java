@@ -23,7 +23,7 @@ public class User {
     @Column(name = "login")
     private String username;
     @Column(name = "nickname", nullable = false, unique = true)
-    private String nickName;
+    private String nickname;
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -33,11 +33,5 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "chat_id"))
     private List<Chat> chats = new ArrayList<>();
-
-
-    public void addChat(Chat chat) {
-        chats.add(chat);
-        chat.getUsers().add(this);
-    }
 
 }

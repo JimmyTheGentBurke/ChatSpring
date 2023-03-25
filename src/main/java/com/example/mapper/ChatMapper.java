@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChatMapper implements Mapper<Chat, ChatDto> {
 
-
     @Override
     public ChatDto mapFrom(Chat object) {
         return ChatDto.builder()
@@ -24,6 +23,5 @@ public class ChatMapper implements Mapper<Chat, ChatDto> {
                 .name(object.getName())
                 .build();
     }
-
 
 }

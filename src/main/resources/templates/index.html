@@ -33,12 +33,11 @@
         <input name="login" type="text" placeholder="Enter your login">
         <input name="nickName" type="text" placeholder="Enter your nickname">
         <input name="password" type="password" placeholder="Create a password">
-        <input type="password" placeholder="Confirm your password">
         <input name="role" hidden="hidden" value="USER">
         <input type="submit" class="button" value="Signup">
       </form>
       <div th:if="${errors}">
-        <p th:each="error :${errors}" th:text="${error.defaultMessage}"> Error message</p>
+        <p style="color: red" th:each="error :${errors}" th:text="${error.defaultMessage}"> Error message</p>
       </div>
       <div class="signup">
         <span class="signup">Already have an account?
@@ -59,6 +58,12 @@
     min-height: 100vh;
     width: 100%;
     background: #009579;
+  }
+  .btn-primary{
+
+    border: 0;
+    background: white;
+
   }
   .container{
     position: absolute;

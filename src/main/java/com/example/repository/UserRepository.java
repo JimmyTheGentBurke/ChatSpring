@@ -10,11 +10,13 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-
     @Query("SELECT u FROM User u JOIN ChatUsers cu ON u.id = cu.user WHERE cu.chat = :id")
     List<User> findUsersByChatId(Long id);
 
-    Optional<User> findByNickNameIgnoreCase(String nickName);
+    Optional<User> findByNicknameIgnoreCase(String nickName);
 
     Optional<User> findByUsername(String username);
+
+    User findUserById(Long id);
+
 }

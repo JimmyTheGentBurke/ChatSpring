@@ -33,9 +33,4 @@ public class Chat {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> users = new ArrayList<>();
 
-    public void addChat(User user) {
-        users.add(user);
-        user.getChats().add(this);
-    }
-
 }

@@ -8,9 +8,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 @IT
-@Sql({
+/*@Sql({
         "classpath:sql/Data.sql"
-})
+})*/
 public abstract class IntegrationTestBase {
 
     private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres");

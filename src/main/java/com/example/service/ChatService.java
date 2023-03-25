@@ -24,7 +24,7 @@ public class ChatService {
     private final ChatMapper chatMapper;
 
     @Transactional
-    public Optional<Chat> save(CreateChatDto createChatDto, Long idRecipient) {
+    public Chat save(CreateChatDto createChatDto, Long idRecipient) {
 
         Chat chat = chatRepository.save(chatMapper.createChatMapper(createChatDto));
 
@@ -37,30 +37,45 @@ public class ChatService {
                 .user(idRecipient)
                 .chat(chat.getId())
                 .build());
-
-        return Optional.of(chat);
-
+        //TODO dont use optional, if it not needed
+        return chat;
     }
-    @Transactional
-    public Optional<ChatUsers> addUser(Long chatId, Long userId) {
 
-        return Optional.of(chatUsersRepository.save(ChatUsers.builder()
+    @Transactional
+    public ChatUsers addUser(Long chatId, Long userId) {
+        return chatUsersRepository.save(ChatUsers.builder()
                 .chat(chatId)
                 .user(userId)
-                .build()));
-
+                .build());
     }
+
     @Transactional(readOnly = true)
     public List<ChatDto> findByUserId(Long id) {
         return chatRepository.findChatsByUser(id).stream()
                 .map(chatMapper::mapFrom)
                 .collect(Collectors.toList());
     }
+
     @Transactional(readOnly = true)
     public Optional<ChatDto> findById(Long id) {
         return Optional.of(chatRepository.findById(id)
                 .map(chatMapper::mapFrom)
                 .orElseThrow());
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        chatRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteUser(Long userId, Long chatId) {
+        chatUsersRepository.deleteChatUsersByUserAndChat(userId, chatId);
+    }
+
+    @Transactional
+    public Long countUsersInChat(Long id) {
+        return chatUsersRepository.countChatUsersByChat(id);
     }
 
 }

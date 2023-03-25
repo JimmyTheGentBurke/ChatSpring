@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Login & Registration Form | CoderGirl</title>
+
+    <!---Custom CSS File--->
+    <link rel="stylesheet" href="/./assets/css/styleIndex.css"/>
+</head>
+<body>
+<div class="container">    <input type="checkbox" id="check">
+    <div class="login form" >
+        <header th:text="${ 'Hello! ' + user.orElseThrow().nickname}"></header>
+
+            <span th:text="${'Current nickname: ' + user.orElseThrow().nickname}"></span>
+            <form th:action="@{/user/v1}" method="post">
+                <input id="nickname" type="text" name = "nickname" placeholder="Change you're nickname">
+                <button type="submit" class="btn-primary2">Edit</button>
+            </form>
+
+            <span>Change password</span>
+            <form th:action="@{/user/v2}" method="post">
+                <input id="password" type="text" name="password" placeholder="Change your password">
+                <button type="submit" class="btn-primary2">Edit</button>
+            </form>
+            <form th:action="@{/user/v3}" method="post">
+            <input  type="submit" class="button2"  value="Delete user">
+            </form>
+            <form th:action="@{/chat}" method="get">
+                <input  type="submit" class="button" value="Home page">
+            </form>
+        <div class="signup">
+    </div>
+</div>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
+    *{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+    .btn-primary2{
+
+        border: 0;
+        background: white;
+        color: #006653;
+        float: right;
+        height: 20px;
+        width: 15px;
+    }
+    body{
+        min-height: 100vh;
+        width: 100%;
+        background: #009579;
+    }
+    .container{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        max-width: 430px;
+        width: 100%;
+        background: #fff;
+        border-radius: 7px;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+    }
+    .container .registration{
+        display: none;
+    }
+    #check:checked ~ .registration{
+        display: block;
+    }
+    #check:checked ~ .login{
+        display: none;
+    }
+    #check{
+        display: none;
+    }
+    .container .form{
+        padding: 2rem;
+    }
+    .form header{
+        font-size: 2rem;
+        font-weight: 500;
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    .form input{
+        height: 60px;
+        width: 100%;
+        padding: 0 15px;
+        font-size: 17px;
+        margin-bottom: 1.3rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        outline: none;
+    }
+    .form input:focus{
+        box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+    }
+    .form a{
+        font-size: 16px;
+        color: #009579;
+        text-decoration: none;
+    }
+    .form a:hover{
+        text-decoration: underline;
+    }
+    .form input.button{
+        color: #fff;
+        background: #009579;
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+        margin-top: 1.7rem;
+        cursor: pointer;
+        transition: 0.4s;
+    } .form input.button2{
+        color: #fff;
+        background: red;
+        font-size: 1.2rem;
+        font-weight: 500;
+        letter-spacing: 1px;
+        margin-top: 1.7rem;
+        cursor: pointer;
+        transition: 0.4s;
+    }
+    .form input.button:hover{
+        background: #006653;
+    }
+    .signup{
+        font-size: 17px;
+        text-align: center;
+    }
+    .signup label{
+        color: #009579;
+        cursor: pointer;
+    }
+    .signup label:hover{
+        text-decoration: underline;
+    }
+
+</style>
+</body>
+</html>

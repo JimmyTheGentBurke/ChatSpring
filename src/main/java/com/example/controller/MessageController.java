@@ -2,12 +2,10 @@ package com.example.controller;
 
 import com.example.dto.ChatDto;
 import com.example.dto.CreateMessageDto;
-import com.example.dto.CreateUserDto;
 import com.example.entity.Chat;
 import com.example.service.ChatService;
 import com.example.service.MessageService;
 import com.example.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,8 +30,8 @@ public class MessageController {
 
     @GetMapping
     @SneakyThrows
-    public String getMessagesByChatId(Model model,
-                                      @RequestParam("chatId") Long chatId) {
+    public String getMessages(Model model,
+                              @RequestParam("chatId") Long chatId) {
 
         model.addAttribute("messages", messageService.findByChatId(chatId));
         model.addAttribute("recipients", userService.findUsersByChatId(chatId));
@@ -45,13 +43,13 @@ public class MessageController {
     @PostMapping
     @SneakyThrows
     public String createMessage(@AuthenticationPrincipal UserDetails userDetails,
-                                HttpServletRequest request,
                                 @ModelAttribute @Validated CreateMessageDto createMessageDto,
                                 BindingResult bindingResult,
                                 RedirectAttributes redirectAttributes,
-                                @RequestParam("chatId") Long chatId) {
+                                @RequestParam("chatId") Long chatId,
+                                @RequestParam("textMessage") String textMessage) {
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
 
             redirectAttributes.addFlashAttribute("message", createMessageDto);
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
@@ -60,18 +58,24 @@ public class MessageController {
 
         Optional<ChatDto> chatDto = chatService.findById(chatId);
 
-        Chat chat = Chat.builder()
-                .id(chatDto.orElseThrow().getId())
-                .creator(chatDto.orElseThrow().getCreator())
-                .name(chatDto.orElseThrow().getName())
-                .build();
-
         messageService.create(CreateMessageDto.builder()
-                .text(request.getParameter("textMessage"))
-                .chatId(chat)
+                .text(textMessage)
+                .chatId(Chat.builder()
+                        .id(chatDto.orElseThrow().getId())
+                        .creator(chatDto.orElseThrow().getCreator())
+                        .name(chatDto.orElseThrow().getName())
+                        .build())
                 .creatorId(userService.findByUsername(userDetails.getUsername()).orElseThrow().getId())
                 .build());
 
+        return "redirect:/message?chatId=" + chatId;
+    }
+
+    @PostMapping("/v1")
+    public String deleteMessage(@RequestParam("chatId") Long chatId,
+                                @RequestParam("messageId") Long messageId) {
+
+        messageService.delete(messageId);
         return "redirect:/message?chatId=" + chatId;
     }
 

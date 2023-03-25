@@ -1,5 +1,6 @@
 package com.example.securingweb;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+//@ConditionalOnProperty(prefix = "security", name = "enable", matchIfMissing = false)
 @EnableWebSecurity
 public class WebSecurityConfig {
 
@@ -18,12 +20,12 @@ public class WebSecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/registration","/login","/").permitAll()
+                        .requestMatchers("/registration", "/login", "/").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/chat",true)
+                        .defaultSuccessUrl("/chat", true)
                         .permitAll()
                 )
                 .logout(LogoutConfigurer::permitAll);
@@ -31,9 +33,9 @@ public class WebSecurityConfig {
         return http.build();
     }
 
-
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+
 }

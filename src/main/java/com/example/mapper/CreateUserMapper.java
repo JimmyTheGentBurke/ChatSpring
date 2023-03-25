@@ -17,14 +17,11 @@ public class CreateUserMapper implements Mapper<CreateUserDto, User> {
 
     private final PasswordEncoder passwordEncoder;
 
-
-
     @Override
     public User mapFrom(CreateUserDto object) {
-
         User build = User.builder()
                 .username(object.getLogin())
-                .nickName(object.getNickName())
+                .nickname(object.getNickName())
                 .password(object.getPassword())
                 .role(Role.valueOf(object.getRole()))
                 .build();
@@ -35,10 +32,6 @@ public class CreateUserMapper implements Mapper<CreateUserDto, User> {
                 .ifPresent(build::setPassword);
 
         return build;
-
-
     }
-
-
 
 }
