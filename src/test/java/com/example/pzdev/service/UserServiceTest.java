@@ -17,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,8 +52,7 @@ public class UserServiceTest {
         Optional<UserDto> resultDto = userService.findByUsername("Boris");
 
         assertThat(resultDto).isPresent();
-        UserDto userDto = resultDto.get();
-        assertThat(userDto.getUsername()).isEqualTo("borisUser");
+        assertThat(resultDto.get().getUsername()).isEqualTo("borisUser");
     }
     @Test
     void findByNicknameTest(){
@@ -64,8 +65,17 @@ public class UserServiceTest {
         Optional<UserDto> resultDto = userService.findByNickname("Boris");
 
         assertThat(resultDto).isPresent();
-        UserDto userDto = resultDto.get();
-        assertThat(userDto.getNickname()).isEqualTo("borisUser");
+        assertThat(resultDto.get().getNickname()).isEqualTo("borisUser");
+
+    }
+    @Test
+    void findUsersByChatId(){
+
+        List<User> user = new ArrayList<>();
+
+        user.add(User.builder().id(1L).build());
+
+        Mockito.doReturn(user).when(userRepository).findUsersByChatId(1L);
 
     }
 
